@@ -1,39 +1,54 @@
-import React, {useContext, useEffect, useState} from 'react';
-import {StyleSheet, Text, TextInput, View} from 'react-native';
+import React, {useCallback, useContext, useEffect, useState} from 'react';
+import {StyleSheet, View} from 'react-native';
 import axios from 'axios';
 
-import {ImagesSlider, Button} from '../components';
+import {ImagesSlider, Input, Button} from '../components';
 import {SelectedItemData, SharedContext} from '../SharedContext';
+import {checkIsValideIp} from '../utils/checkIsValideIp';
+import IpDetails from '../components/IpDetails';
 
 const DashboardScreen = () => {
   const {selectedItem, setSelectedItem} = useContext(SharedContext);
   const [ipAddress, setIpAddress] = useState('');
   const [ipInfo, setIpInfo] = useState(selectedItem.ipInfo);
+  const [isValidIp, setIsValidIp] = useState(true);
+
+  const handleIPdata = useCallback(
+    (ipResponse: Object) => {
+      setIpInfo(ipResponse);
+      setSelectedItem((prevSelectedItem: SelectedItemData) => ({
+        ...prevSelectedItem,
+        ipInfo: ipResponse,
+      }));
+    },
+    [setSelectedItem],
+  );
 
   useEffect(() => {
     const fetchIpInfo = async () => {
       try {
         const response = await axios.get('https://ipwho.is/');
-        setIpInfo(response.data);
-        setSelectedItem((prevSelectedItem: SelectedItemData) => ({
-          ...prevSelectedItem,
-          ipInfo: response.data,
-        }));
+        handleIPdata(response.data);
       } catch (error) {
         console.error('Error fetching IP:', error);
       }
     };
     fetchIpInfo();
-  }, [setSelectedItem]);
+  }, [handleIPdata, setSelectedItem]);
+
+  const handleIpSubmit = () => {
+    if (!checkIsValideIp(ipAddress)) {
+      setIsValidIp(false);
+      return;
+    }
+    setIsValidIp(true);
+    handleIpSearch();
+  };
 
   const handleIpSearch = async () => {
     try {
       const response = await axios.get(`https://ipwho.is/${ipAddress}`);
-      setIpInfo(response.data);
-      setSelectedItem((prevSelectedItem: SelectedItemData) => ({
-        ...prevSelectedItem,
-        ipInfo: response.data,
-      }));
+      handleIPdata(response.data);
     } catch (error) {
       console.error('Error in IP searching:', error);
     }
@@ -46,26 +61,29 @@ const DashboardScreen = () => {
     }));
   };
 
+  const handleTextChange = (value: string) => {
+    setIpAddress(value);
+
+    if (value.length === 0) {
+      setIsValidIp(true);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.ipContainer}>
-        <TextInput
-          style={styles.ipInput}
-          placeholder="Enter IP Address"
+        <Input
           value={ipAddress}
-          onChangeText={setIpAddress}
+          onChangeText={handleTextChange}
+          placeholder="Enter IP Address"
+          errorMessage={
+            !isValidIp ? 'Please type a valid IP address' : undefined
+          }
         />
-        <Button title="Search" onPress={handleIpSearch} />
+
+        <Button title="Search" onPress={handleIpSubmit} />
       </View>
-      {ipInfo && (
-        <View style={styles.ipInfo}>
-          <Text>IP Address: {ipInfo.ip}</Text>
-          <Text>ISP: {ipInfo.connection.isp}</Text>
-          <Text>
-            Location: {ipInfo.city}, {ipInfo.region_code}
-          </Text>
-        </View>
-      )}
+      {ipInfo && <IpDetails ipInfo={ipInfo} />}
       <ImagesSlider onSelectImage={handleImageSelect} />
     </View>
   );
@@ -78,19 +96,4 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   ipContainer: {},
-  ipInput: {
-    backgroundColor: '#ddd',
-    borderWidth: 1,
-    borderColor: '#d0d0d0',
-    marginHorizontal: 12,
-    marginVertical: 8,
-    paddingHorizontal: 8,
-    borderRadius: 8,
-  },
-  ipInfo: {
-    marginHorizontal: 12,
-  },
-  button: {
-    marginHorizontal: 16,
-  },
 });

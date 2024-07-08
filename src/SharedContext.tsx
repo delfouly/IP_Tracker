@@ -1,6 +1,6 @@
 import React, {createContext, Dispatch, SetStateAction, useState} from 'react';
 
-type IP = {
+export type IP = {
   ip: string;
   connection: {
     isp: string;

@@ -3,7 +3,7 @@ import {View, Text, StyleSheet, ActivityIndicator} from 'react-native';
 import {LineChart} from 'react-native-gifted-charts';
 
 const STREAM_URL = 'wss://stream.binance.com:443/ws/btcusdt@aggTrade';
-const SUBSCRIPTION_MESSAGE = JSON.stringify({
+const WS_SUBSCRIPTION_MESSAGE = JSON.stringify({
   method: 'SUBSCRIBE',
   params: ['btcusdt@aggTrade'],
   id: 1,
@@ -47,7 +47,7 @@ const MarketScreen = () => {
     const webSocket = new WebSocket(STREAM_URL);
 
     webSocket.onopen = () => {
-      webSocket.send(SUBSCRIPTION_MESSAGE);
+      webSocket.send(WS_SUBSCRIPTION_MESSAGE);
     };
 
     webSocket.onmessage = event => {

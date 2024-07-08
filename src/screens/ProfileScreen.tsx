@@ -1,8 +1,9 @@
-import {Image, StyleSheet, Text, View} from 'react-native';
+import {Image, StyleSheet, View} from 'react-native';
 import React, {useContext} from 'react';
 
 import {SharedContext} from '../SharedContext';
 import {IMAGES} from '../images';
+import {IpDetails} from '../components';
 
 const ProfileScreen = () => {
   const {selectedItem} = useContext(SharedContext);
@@ -10,13 +11,7 @@ const ProfileScreen = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.ipInfo}>
-        <Text>IP Address: {ipInfo.ip}</Text>
-        <Text>ISP: {ipInfo.connection.isp}</Text>
-        <Text>
-          Location: {ipInfo.city}, {ipInfo.region_code}
-        </Text>
-      </View>
+      {ipInfo && <IpDetails ipInfo={ipInfo} />}
       <Image
         source={IMAGES[selectedImageIndex].source}
         style={styles.selectedImage}
