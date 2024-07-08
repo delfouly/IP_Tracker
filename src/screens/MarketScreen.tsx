@@ -1,5 +1,11 @@
 import React, {useState, useEffect, useCallback} from 'react';
-import {View, Text, StyleSheet, ActivityIndicator} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+  ScrollView,
+} from 'react-native';
 import {LineChart} from 'react-native-gifted-charts';
 
 import {addAndSortNumber} from '../utils/addAndSortNumber';
@@ -40,7 +46,7 @@ const MarketScreen = () => {
   }, [handleWebSocketMessage]);
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <View style={styles.labelContainer}>
         <Text style={styles.labelKey}>{SYMBOL_TYPE}</Text>
         <Text style={styles.labelValue}>{latestPrice}</Text>
@@ -66,10 +72,11 @@ const MarketScreen = () => {
             xAxisColor="#0BA5A4"
             color="#0BA5A4"
             stepHeight={40}
+            yAxisTextStyle={styles.labels}
           />
         </View>
       )}
-    </View>
+    </ScrollView>
   );
 };
 
@@ -82,15 +89,16 @@ const styles = StyleSheet.create({
   },
   chart: {
     marginVertical: 12,
-    marginEnd: 30,
+    backgroundColor: '#ddd',
+    flex: 1,
   },
   loader: {
     margin: 50,
   },
   labelContainer: {
-    width: 200,
-    height: 200,
-    borderRadius: 200 / 2,
+    width: 150,
+    height: 150,
+    borderRadius: 150 / 2,
     borderWidth: 4,
     backgroundColor: 'white',
     alignSelf: 'center',
@@ -99,16 +107,21 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
   labelKey: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    alignSelf: 'center',
+    marginBottom: 8,
+    color: '#000',
+  },
+  labelValue: {
     fontSize: 20,
     fontWeight: 'bold',
     alignSelf: 'center',
     marginBottom: 8,
-  },
-  labelValue: {
-    fontSize: 30,
-    fontWeight: 'bold',
-    alignSelf: 'center',
-    marginBottom: 8,
     flexWrap: 'wrap',
+    color: '#000',
+  },
+  labels: {
+    color: '#000',
   },
 });
