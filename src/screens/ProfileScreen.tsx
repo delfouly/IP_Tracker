@@ -1,5 +1,5 @@
-import {Image, StyleSheet, View} from 'react-native';
 import React, {useContext} from 'react';
+import {Image, StyleSheet, View} from 'react-native';
 
 import {SharedContext} from '../SharedContext';
 import {IMAGES} from '../images';

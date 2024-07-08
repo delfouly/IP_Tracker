@@ -5,11 +5,12 @@ import {
   Text,
   TextInput,
   TextInputProps,
+  TextStyle,
 } from 'react-native';
 
 type InputProps = {
   errorMessage?: string;
-  errorStyle?: StyleProp<Text>;
+  errorStyle?: StyleProp<TextStyle>;
 } & TextInputProps;
 
 const Input = ({errorMessage, errorStyle, ...props}: InputProps) => {
@@ -39,5 +40,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     borderRadius: 8,
   },
-  error: {},
+  error: {
+    marginHorizontal: 12,
+    color: '#EE4B2B',
+    marginBottom: 8,
+  },
 });

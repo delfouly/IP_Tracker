@@ -1,5 +1,5 @@
-import {Image, ImageSourcePropType, Pressable, StyleSheet} from 'react-native';
 import React from 'react';
+import {Image, ImageSourcePropType, Pressable, StyleSheet} from 'react-native';
 
 type ImageCardProps = {
   imageSource: ImageSourcePropType;

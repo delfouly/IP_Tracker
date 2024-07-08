@@ -18,15 +18,6 @@ const MarketScreen = () => {
   const [latestPrice, setLatestPrice] = useState(0); // displayed in the main centered circle
   const [lineData, setLineData] = useState<{value: number}[]>([]); //actual transaction prices represented by points inside the chart
 
-  // const navigation = useNavigation();
-
-  // useEffect(() => {
-  //   const unsubscribe = navigation.addListener('blur', () => {
-  //     console.log('Tab component unmounted');
-  //   });
-  //   return unsubscribe;
-  // }, [navigation]);
-
   const handleWebSocketMessage = useCallback((event: WebSocketMessageEvent) => {
     const data = JSON.parse(event.data);
     if (data.e === TRADE_TYPE && data.s === SYMBOL_TYPE) {

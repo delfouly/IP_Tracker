@@ -2,10 +2,11 @@ import React, {useCallback, useContext, useEffect, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import axios from 'axios';
 
-import {ImagesSlider, Input, Button} from '../components';
+import {ImagesSlider, Input, Button, IpDetails} from '../components';
 import {IP, SelectedItemData, SharedContext} from '../SharedContext';
 import {checkIsValideIp} from '../utils/checkIsValideIp';
-import {IpDetails} from '../components';
+
+const IP_CHECKER_URL = 'https://ipwho.is/';
 
 const DashboardScreen = () => {
   const {selectedItem, setSelectedItem} = useContext(SharedContext);
@@ -27,7 +28,7 @@ const DashboardScreen = () => {
   const fetchIpInfo = useCallback(
     async (ip = '') => {
       try {
-        const response = await axios.get(`https://ipwho.is/${ip}`);
+        const response = await axios.get(`${IP_CHECKER_URL}${ip}`);
         handleIPdata(response.data);
       } catch (error) {
         console.error('Error fetching IP:', error);

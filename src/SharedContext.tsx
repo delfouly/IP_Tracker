@@ -1,4 +1,10 @@
-import React, {createContext, Dispatch, SetStateAction, useState} from 'react';
+import React, {
+  createContext,
+  Dispatch,
+  SetStateAction,
+  useMemo,
+  useState,
+} from 'react';
 
 export type IP = {
   ip: string;
@@ -41,9 +47,12 @@ export const SharedProvider = ({children}: SharedProviderProps) => {
     selectedImageIndex: 0,
   });
 
+  const value = useMemo(
+    () => ({selectedItem, setSelectedItem}),
+    [selectedItem],
+  );
+
   return (
-    <SharedContext.Provider value={{selectedItem, setSelectedItem}}>
-      {children}
-    </SharedContext.Provider>
+    <SharedContext.Provider value={value}>{children}</SharedContext.Provider>
   );
 };

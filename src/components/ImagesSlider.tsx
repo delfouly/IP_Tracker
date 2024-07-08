@@ -1,5 +1,5 @@
 import React from 'react';
-import {FlatList, StyleSheet} from 'react-native';
+import {FlatList, ListRenderItemInfo, StyleSheet} from 'react-native';
 
 import ImageCard from './ImageCard';
 import {ImageData, IMAGES} from '../images';
@@ -14,12 +14,12 @@ const ImagesSlider = ({onSelectImage}: ImagesSliderProps) => {
       data={IMAGES}
       keyExtractor={image => image.id}
       horizontal
-      contentContainerStyle={styles.contentContainer}
       style={styles.list}
-      renderItem={({_image, index}: {image: ImageData; index: number}) => (
+      renderItem={({item, index}: ListRenderItemInfo<ImageData>) => (
         <ImageCard
           imageSource={IMAGES[index].source}
           onPress={() => onSelectImage(index)}
+          {...item}
         />
       )}
     />
@@ -32,5 +32,4 @@ const styles = StyleSheet.create({
   list: {
     marginHorizontal: 12,
   },
-  contentContainer: {},
 });
