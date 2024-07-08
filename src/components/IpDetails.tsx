@@ -8,13 +8,11 @@ type IpDetailsProps = {
 const IpDetails = ({ipInfo}: IpDetailsProps) => {
   return (
     <View style={styles.ipInfo}>
-      {ipInfo?.ip && <Text>IP Address: {ipInfo.ip}</Text>}
-      {ipInfo?.connection?.isp && <Text>ISP: {ipInfo.connection.isp}</Text>}
-      {ipInfo?.city && ipInfo?.region_code && (
-        <Text>
-          Location: {ipInfo.city}, {ipInfo.region_code}
-        </Text>
-      )}
+      <Text style={styles.ipData}>IP Address: {ipInfo.ip ?? 'N/A'}</Text>
+      <Text style={styles.ipData}>ISP: {ipInfo.connection.isp ?? 'N/A'}</Text>
+      <Text style={styles.ipData}>
+        Location: {ipInfo.city ?? 'N/A'}, {ipInfo.region_code ?? 'N/A'}
+      </Text>
     </View>
   );
 };
@@ -24,5 +22,8 @@ export default IpDetails;
 const styles = StyleSheet.create({
   ipInfo: {
     marginHorizontal: 12,
+  },
+  ipData: {
+    color: '#000',
   },
 });

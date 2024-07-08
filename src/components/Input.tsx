@@ -16,7 +16,11 @@ type InputProps = {
 const Input = ({errorMessage, errorStyle, ...props}: InputProps) => {
   return (
     <>
-      <TextInput style={[styles.ipInput, props.style]} {...props} />
+      <TextInput
+        style={[styles.input, props.style]}
+        placeholderTextColor={'grey'}
+        {...props}
+      />
       {errorMessage && (
         <Text style={[styles.error, errorStyle]}>{errorMessage}</Text>
       )}
@@ -27,7 +31,7 @@ const Input = ({errorMessage, errorStyle, ...props}: InputProps) => {
 export default Input;
 
 const styles = StyleSheet.create({
-  ipInput: {
+  input: {
     backgroundColor: '#ddd',
     borderWidth: 1,
     borderColor: '#d0d0d0',
@@ -35,6 +39,7 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     paddingHorizontal: 8,
     borderRadius: 8,
+    color: '#000',
   },
   error: {
     marginHorizontal: 12,

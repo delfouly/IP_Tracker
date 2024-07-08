@@ -79,7 +79,7 @@ const DashboardScreen = () => {
 
         <Button title="Search" onPress={handleIpSubmit} />
       </View>
-      {ipInfo && <IpDetails ipInfo={ipInfo} />}
+      <IpDetails ipInfo={ipInfo} />
       <ImagesSlider onSelectImage={handleImageSelect} />
     </View>
   );
