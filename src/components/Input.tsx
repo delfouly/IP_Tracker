@@ -16,7 +16,7 @@ type InputProps = {
 const Input = ({errorMessage, errorStyle, ...props}: InputProps) => {
   return (
     <>
-      <TextInput style={[styles.ipInput, props.style]} {...props}/>
+      <TextInput style={[styles.ipInput, props.style]} {...props} />
       {errorMessage && (
         <Text style={[styles.error, errorStyle]}>{errorMessage}</Text>
       )}
