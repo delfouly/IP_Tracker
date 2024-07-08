@@ -3,9 +3,9 @@ import {StyleSheet, View} from 'react-native';
 import axios from 'axios';
 
 import {ImagesSlider, Input, Button} from '../components';
-import {SelectedItemData, SharedContext} from '../SharedContext';
+import {IP, SelectedItemData, SharedContext} from '../SharedContext';
 import {checkIsValideIp} from '../utils/checkIsValideIp';
-import IpDetails from '../components/IpDetails';
+import {IpDetails} from '../components';
 
 const DashboardScreen = () => {
   const {selectedItem, setSelectedItem} = useContext(SharedContext);
@@ -14,7 +14,7 @@ const DashboardScreen = () => {
   const [isValidIp, setIsValidIp] = useState(true);
 
   const handleIPdata = useCallback(
-    (ipResponse: Object) => {
+    (ipResponse: IP) => {
       setIpInfo(ipResponse);
       setSelectedItem((prevSelectedItem: SelectedItemData) => ({
         ...prevSelectedItem,
@@ -24,17 +24,21 @@ const DashboardScreen = () => {
     [setSelectedItem],
   );
 
-  useEffect(() => {
-    const fetchIpInfo = async () => {
+  const fetchIpInfo = useCallback(
+    async (ip = '') => {
       try {
-        const response = await axios.get('https://ipwho.is/');
+        const response = await axios.get(`https://ipwho.is/${ip}`);
         handleIPdata(response.data);
       } catch (error) {
         console.error('Error fetching IP:', error);
       }
-    };
+    },
+    [handleIPdata],
+  );
+
+  useEffect(() => {
     fetchIpInfo();
-  }, [handleIPdata, setSelectedItem]);
+  }, [fetchIpInfo]);
 
   const handleIpSubmit = () => {
     if (!checkIsValideIp(ipAddress)) {
@@ -42,21 +46,12 @@ const DashboardScreen = () => {
       return;
     }
     setIsValidIp(true);
-    handleIpSearch();
-  };
-
-  const handleIpSearch = async () => {
-    try {
-      const response = await axios.get(`https://ipwho.is/${ipAddress}`);
-      handleIPdata(response.data);
-    } catch (error) {
-      console.error('Error in IP searching:', error);
-    }
+    fetchIpInfo(ipAddress);
   };
 
   const handleImageSelect = (imageIndex: number) => {
-    setSelectedItem(selectedItem => ({
-      ...selectedItem,
+    setSelectedItem(prevSelectedItem => ({
+      ...prevSelectedItem,
       selectedImageIndex: imageIndex,
     }));
   };

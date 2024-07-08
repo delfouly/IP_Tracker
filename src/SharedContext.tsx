@@ -25,12 +25,10 @@ const initialState = {
   region_code: '',
 };
 
-export const SharedContext = createContext({
+export const SharedContext = createContext<SharedContextData>({
   selectedItem: {ipInfo: initialState, selectedImageIndex: 0},
-  setSelectedItem: ({ipInfo, selectedImageIndex}: SelectedItemData) => ({
-    ipInfo,
-    selectedImageIndex,
-  }),
+  setSelectedItem: newItem =>
+    newItem as Dispatch<SetStateAction<SelectedItemData>>,
 });
 
 type SharedProviderProps = {

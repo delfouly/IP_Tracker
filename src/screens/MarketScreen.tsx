@@ -1,27 +1,22 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import {View, Text, StyleSheet, ActivityIndicator} from 'react-native';
 import {LineChart} from 'react-native-gifted-charts';
 
+import {addAndSortNumber} from '../utils/addAndSortNumber';
+
 const STREAM_URL = 'wss://stream.binance.com:443/ws/btcusdt@aggTrade';
+const TRADE_TYPE = 'aggTrade';
+const SYMBOL_TYPE = 'BTCUSDT';
 const WS_SUBSCRIPTION_MESSAGE = JSON.stringify({
   method: 'SUBSCRIBE',
   params: ['btcusdt@aggTrade'],
   id: 1,
 });
 
-function addAndSortNumber(numberArray: number[], newNumber: number) {
-  if (!numberArray.includes(newNumber)) {
-    numberArray.push(newNumber);
-    numberArray.sort((a, b) => a - b);
-  }
-
-  return numberArray;
-}
-
 const MarketScreen = () => {
-  const [prices, setPrices] = useState<number[]>([]);
-  const [latestPrice, setLatestPrice] = useState(0);
-  const [lineData, setLineData] = useState<{value: number}[]>([]);
+  const [prices, setPrices] = useState<number[]>([]); // unique & sorted prices array to be displayed on Y-axis
+  const [latestPrice, setLatestPrice] = useState(0); // displayed in the main centered circle
+  const [lineData, setLineData] = useState<{value: number}[]>([]); //actual transaction prices represented by points inside the chart
 
   // const navigation = useNavigation();
 
@@ -32,40 +27,35 @@ const MarketScreen = () => {
   //   return unsubscribe;
   // }, [navigation]);
 
+  const handleWebSocketMessage = useCallback((event: WebSocketMessageEvent) => {
+    const data = JSON.parse(event.data);
+    if (data.e === TRADE_TYPE && data.s === SYMBOL_TYPE) {
+      const price = parseFloat(data.p);
+      setLatestPrice(price);
+      setLineData(prevLineData => [...prevLineData, {value: price}]);
+      setPrices(prevPrices => addAndSortNumber(prevPrices, price));
+    }
+  }, []);
+
   useEffect(() => {
-    const handleWebSocketMessage = (event: WebSocketMessageEvent) => {
-      const data = JSON.parse(event.data);
-      if (data.e === 'aggTrade' && data.s === 'BTCUSDT') {
-        const price = parseFloat(data.p);
-        setLatestPrice(price);
-        setLineData(prevLineData => [...prevLineData, {value: price}]);
-
-        setPrices(prev => addAndSortNumber(prev, price));
-      }
-    };
-
     const webSocket = new WebSocket(STREAM_URL);
 
-    webSocket.onopen = () => {
-      webSocket.send(WS_SUBSCRIPTION_MESSAGE);
-    };
-
-    webSocket.onmessage = event => {
-      handleWebSocketMessage(event);
-    };
+    webSocket.onopen = () => webSocket.send(WS_SUBSCRIPTION_MESSAGE);
+    webSocket.onmessage = event => handleWebSocketMessage(event);
 
     return () => {
       webSocket.close();
     };
-  }, []);
+  }, [handleWebSocketMessage]);
 
   return (
     <View style={styles.container}>
       <View style={styles.labelContainer}>
-        <Text style={styles.labelKey}>BTCUSDT</Text>
+        <Text style={styles.labelKey}>{SYMBOL_TYPE}</Text>
         <Text style={styles.labelValue}>{latestPrice}</Text>
       </View>
 
+      {/* loading while propagating prices */}
       {prices.length < 5 ? (
         <ActivityIndicator style={styles.loader} />
       ) : (
